@@ -1,13 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './index.css';
 import { Checkbox } from "@nextui-org/react";
 import { motion } from "framer-motion"
 
-
-
 function Todo() {
-
-  
   const [inputValue, setInputValue] = useState('');
   const [tasks, setTasks] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -16,6 +12,14 @@ function Todo() {
   const editInputRef = useRef(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaderVisible(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const openAlertPopup = () => {
     setIsAlertOpen(true);
@@ -93,29 +97,18 @@ function Todo() {
   const checkboxClickHandler = () => {
   }
 
-  
-
   const makeLoadingGoAway = () => {
     setIsLoading(false);
   }
 
-
-
-  
-
   return (
-
-    
     <div onClick={makeLoadingGoAway} className='flex flex-col items-center justify-center h-screen bg-gray-200 p-4'>
-
-
-{/* //HEADING */}
+      {/* //HEADING */}
       <div id='typingWrapper'>
-      <h1 id='typingAnimationHeader' className='text-7xl font-bold mb-4 uppercase'>
-        Just Task It. 
-      </h1>
+        <h1 id='typingAnimationHeader' className='text-7xl font-bold mb-4 uppercase'>
+          Just Task It.
+        </h1>
       </div>
-
 
       <motion.div
         style={{
@@ -134,18 +127,11 @@ function Todo() {
         }}
       />
 
+      {isLoaderVisible && (
+        <span id='loader' className='fade-out'></span>
+      )}
 
-        {
-        isLoading && (
-          <span id='loader'></span>
-        )
-      }
-
-
-
-      
-      
-    {/* INPUT ADDING TASK*/}
+      {/* INPUT ADDING TASK*/}
       <div className='flex flex-col items-center'>
         <input id='taskInput'
           maxLength={22}
@@ -164,35 +150,23 @@ function Todo() {
       </div>
 
       {/* TASK LIST */}
-      <ul
-       className='w-full max-w-md'>
+      <ul className='w-full max-w-md'>
         {tasks.map((task, index) => (
           <li
-          
             key={task.id}
             className='rounded cursor-grap active:cursor-grabbing flex items-center bg-slate-100 p-3 pl-4 mb-2 transition transform ease-out duration-500'
             style={{ animation: 'fadeIn 0.5s' }}
           >
-        
+            {/* TASK HAS BEEN DONE BUTTON */}
+            <label className="flex items-center cursor-pointer">
+              <Checkbox
+                className='w-7 h-7 border mr-3 rounded'
+                size='lg'
+                onClick={checkboxClickHandler}
+              />
+            </label>
 
-          {/* TASK HAS BEEN DONE BUTTON */}
-          
-          {/* Checkbox */}
-        <label className="flex items-center cursor-pointer">
-
-          <Checkbox
-            className='w-7 h-7 border mr-3 rounded'
-            size='lg'
-            onClick={checkboxClickHandler}>
-
-
-          </Checkbox>
-
-        </label>
-      
-          
-
-          {/* DELETE TASK BUTTON */}
+            {/* DELETE TASK BUTTON */}
             <button className='text-red-700 mr-4' onClick={() => removeTask(index)}>
               Delete
             </button>
@@ -205,19 +179,14 @@ function Todo() {
             {/* THE VALUE OF THE INPUT SHOW IN THE LIST*/}
             <span className='ml-4'>{task.text}</span>
           </li>
-
         ))}
-
       </ul>
-
 
       {/* EDITING POPUP */}
       {isOpen && (
-        <div 
-        
-        className='fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50'>
+        <div className='fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50'>
           <div className='relative w-80 h-60 bg-gray-500 rounded-lg flex flex-col items-center justify-center p-4 transition transform ease-out duration-500'
-          style={{ animation: 'editPopupIn 0.5s' }}>
+            style={{ animation: 'editPopupIn 0.5s' }}>
             <h1 className='mb-9 font-normal'>Edit your Task</h1>
 
             {/* CLOSE POPUP BUTTON */}
@@ -244,26 +213,22 @@ function Todo() {
         </div>
       )}
 
-
       {/* ALERT POPUP */}
       {isAlertOpen && (
         <div id='alert-container' onClick={closeAlertPopup} 
-            className='transition transform ease-out duration-500 fixed inset-0 flex items-center justify-center'
-            style={{ animation: 'alertIn 0.5s' }}
+          className='transition transform ease-out duration-500 fixed inset-0 flex items-center justify-center'
+          style={{ animation: 'alertIn 0.5s' }}
         >
           {/* MAKING ALERT POPUP GO AWAY WHEN CLICKING */}
           <div onClick={alertClickHandler} className='cursor-pointer absolute m-4 w-29 h-30 text-center bg-white rounded-lg bottom-0 left-0 p-4'>
             <h1 className='mb-4 text-green-800 font-medium'>
               Task Saved Successfully!
-              </h1>
-  
+            </h1>
           </div>
         </div>
       )}
     </div>
   );
 }
-
-
 
 export default Todo;

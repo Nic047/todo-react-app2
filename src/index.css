@@ -110,12 +110,15 @@
   animation-delay: 2s;
 }
 
+
+
 /* LOADER: */
 
 #loader {
   animation: rotate 1s infinite;
   height: 50px;
   width: 50px;
+  transition: opacity 0.5s ease-out;
 }
 
 #loader:before,
@@ -174,3 +177,6 @@
   }
 }
 
+.loader.fade-out {
+  opacity: 0;
+}
