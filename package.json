@@ -1,5 +1,5 @@
 {
-  "homepage": "https://github.com/Nic047/todo-react-app2.git",
+  "homepage": "https://Nic047/github.io/todo-react-app-final",
   "name": "todo-react-app",
   "private": true,
   "version": "0.0.0",
@@ -10,7 +10,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@nextui-org/react": "^2.4.1",
