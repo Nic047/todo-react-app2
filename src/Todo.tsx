@@ -1,18 +1,22 @@
-import { useState, useRef, useEffect } from 'react';
-import './index.css';
+import React, { useState, useRef, useEffect, KeyboardEvent, ChangeEvent } from 'react';
 import { Checkbox } from "@nextui-org/react";
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
+import './index.css';
 
-function Todo() {
-  const [inputValue, setInputValue] = useState('');
-  const [tasks, setTasks] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const [editingIndex, setEditingIndex] = useState(null);
-  const [newInputValue, setNewInputValue] = useState('');
-  const editInputRef = useRef(null);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+interface Task {
+  id: number;
+  text: string;
+}
+
+export default function Todo() {
+  const [inputValue, setInputValue] = useState<string>('');
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [newInputValue, setNewInputValue] = useState<string>('');
+  const editInputRef = useRef<HTMLInputElement>(null);
+  const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+  const [isLoaderVisible, setIsLoaderVisible] = useState<boolean>(true);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -24,7 +28,7 @@ function Todo() {
   const openAlertPopup = () => {
     setIsAlertOpen(true);
     setTimeout(() => {
-      setIsAlertOpen(false); 
+      setIsAlertOpen(false);
     }, 2800);
   }
 
@@ -48,13 +52,13 @@ function Todo() {
     }
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       addTask();
     }
   };
 
-  const handleEditKeyPress = (event) => {
+  const handleEditKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && editInputRef.current === document.activeElement) {
       saveEditedTask();
     }
@@ -63,28 +67,30 @@ function Todo() {
   const saveEditedTask = () => {
     if (newInputValue.trim() !== '') {
       const updatedTasks = [...tasks];
-      updatedTasks[editingIndex] = { ...updatedTasks[editingIndex], text: newInputValue }; 
-      setTasks(updatedTasks);
-      setEditingIndex(null); 
-      setNewInputValue('');
-      closePopup();
-      openAlertPopup();
+      if (editingIndex !== null) {
+        updatedTasks[editingIndex] = { ...updatedTasks[editingIndex], text: newInputValue };
+        setTasks(updatedTasks);
+        setEditingIndex(null);
+        setNewInputValue('');
+        closePopup();
+        openAlertPopup();
+      }
     } else {
       alert('Du musst etwas angeben!');
     }
   };
 
-  const removeTask = (index) => {
+  const removeTask = (index: number) => {
     setTasks(tasks.filter((_, i) => i !== index));
   };
 
-  const openPopup = (index) => {
+  const openPopup = (index: number) => {
     setEditingIndex(index);
-    setNewInputValue(tasks[index].text); 
+    setNewInputValue(tasks[index].text);
     setIsOpen(true);
     setTimeout(() => {
       if (editInputRef.current) {
-        editInputRef.current.focus(); 
+        editInputRef.current.focus();
       }
     }, 0);
   };
@@ -95,10 +101,11 @@ function Todo() {
   };
 
   const checkboxClickHandler = () => {
+    // Add your checkbox click handler logic here
   }
 
   const makeLoadingGoAway = () => {
-    setIsLoading(false);
+    setIsLoaderVisible(false);
   }
 
   return (
@@ -136,15 +143,15 @@ function Todo() {
         <input id='taskInput'
           maxLength={22}
           onKeyDown={handleKeyPress}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
           value={inputValue}
           className='rounded w-64 m-4 p-3 pl-4 bg-black text-white'
           type='text'
           placeholder='Type in your task...'
         />
         {/* ADDING TASK BUTTON */}
-        <button id='addButton' className='mb-4 p-1 border border-gray-500 rounded hover:bg-black hover:text-white w-24 transition duration-300' 
-        onClick={addTask}>
+        <button id='addButton' className='mb-4 p-1 border border-gray-500 rounded hover:bg-black hover:text-white w-24 transition duration-300'
+          onClick={addTask}>
           Add
         </button>
       </div>
@@ -200,7 +207,7 @@ function Todo() {
               ref={editInputRef}
               onKeyDown={handleEditKeyPress}
               type='text'
-              onChange={(e) => setNewInputValue(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setNewInputValue(e.target.value)}
               value={newInputValue} // Set the input value to the newInputValue state
               className='w-full mb-4 p-2 rounded outline-none'
             />
@@ -215,7 +222,7 @@ function Todo() {
 
       {/* ALERT POPUP */}
       {isAlertOpen && (
-        <div id='alert-container' onClick={closeAlertPopup} 
+        <div id='alert-container' onClick={closeAlertPopup}
           className='transition transform ease-out duration-500 fixed inset-0 flex items-center justify-center'
           style={{ animation: 'alertIn 0.5s' }}
         >
@@ -230,5 +237,3 @@ function Todo() {
     </div>
   );
 }
-
-export default Todo;
